@@ -7,6 +7,7 @@ class ResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // files содержит base64 картинки — слишком большой, скрываем
     final fields = data.entries.where((e) => e.key != 'files');
 
     return Container(

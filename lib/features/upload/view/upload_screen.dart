@@ -7,6 +7,19 @@ import '../data/upload_repository.dart';
 import 'widgets/photo_preview.dart';
 import 'widgets/result_card.dart';
 
+const _brandBlue = Color(0xFF1A73E8);
+
+const _buttonStyle = ButtonStyle(
+  padding: WidgetStatePropertyAll(
+    EdgeInsets.symmetric(vertical: 14),
+  ),
+  shape: WidgetStatePropertyAll(
+    RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    ),
+  ),
+);
+
 class UploadScreen extends StatelessWidget {
   const UploadScreen({super.key});
 
@@ -22,24 +35,13 @@ class UploadScreen extends StatelessWidget {
 class _UploadView extends StatelessWidget {
   const _UploadView();
 
-  static const _buttonStyle = ButtonStyle(
-    padding: WidgetStatePropertyAll(
-      EdgeInsets.symmetric(vertical: 14),
-    ),
-    shape: WidgetStatePropertyAll(
-      RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         title: const Text('HealTech'),
-        backgroundColor: const Color(0xFF1A73E8),
+        backgroundColor: _brandBlue,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -53,9 +55,9 @@ class _UploadView extends StatelessWidget {
                 const SizedBox(height: 8),
                 const _Header(),
                 const SizedBox(height: 24),
-                _buildPhotoArea(state),
+                _PhotoArea(state: state),
                 const SizedBox(height: 20),
-                _buildActions(context, state),
+                _Actions(state: state),
                 const SizedBox(height: 20),
                 if (state is UploadSuccess) ResultCard(data: state.data),
               ],
@@ -65,8 +67,15 @@ class _UploadView extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildPhotoArea(UploadState state) {
+class _PhotoArea extends StatelessWidget {
+  const _PhotoArea({required this.state});
+
+  final UploadState state;
+
+  @override
+  Widget build(BuildContext context) {
     return switch (state) {
       UploadInitial() => const _EmptyPhotoPlaceholder(),
       UploadPhotoSelected s => PhotoPreview(file: s.file),
@@ -78,9 +87,17 @@ class _UploadView extends StatelessWidget {
         ),
     };
   }
+}
 
-  Widget _buildActions(BuildContext context, UploadState state) {
+class _Actions extends StatelessWidget {
+  const _Actions({required this.state});
+
+  final UploadState state;
+
+  @override
+  Widget build(BuildContext context) {
     final cubit = context.read<UploadCubit>();
+    final state = this.state; // локальная переменная — type promotion работает
     final isLoading = state is UploadLoading;
 
     return Column(
@@ -120,7 +137,7 @@ class _UploadView extends StatelessWidget {
                 : const Icon(Icons.upload_rounded),
             label: Text(isLoading ? 'Загружаю...' : 'Загрузить'),
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF1A73E8),
+              backgroundColor: _brandBlue,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),

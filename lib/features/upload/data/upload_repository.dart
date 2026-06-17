@@ -19,7 +19,14 @@ class UploadRepository {
         data: formData,
         options: Options(headers: {'Accept': 'application/json'}),
       );
-      return response.data as Map<String, dynamic>;
+      if (response.statusCode != 200) {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+      final data = response.data;
+      if (data is! Map<String, dynamic>) {
+        throw Exception('Unexpected response format');
+      }
+      return data;
     } on DioException catch (e) {
       throw Exception(e.message ?? 'Network error');
     }
